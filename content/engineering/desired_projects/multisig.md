@@ -1,6 +1,6 @@
 ---
 title: Multisig Treasury / Vault
-type: Core Primitive
+type: Desired Project
 priority: 0
 flywheel: Security
 category: Custody & Security
@@ -16,8 +16,8 @@ Multi-signature governance program for LEZ, enabling M-of-N threshold approval f
 
 - [x] Multi-sig smart contract can be set up with M-of-N threshold at deployment; where M is configured and N is the total number of currently authorised signers
 - [x] Authorised signers can be set up at deployment
-- [ ] Authorised signers can be added *(v0.2)*
-- [ ] Authorised signers can be removed *(v0.2)*
+- [x] Authorised signers can be added
+- [x] Authorised signers can be removed
 - [x] Signing workflow enables first signer to propose, and others to add their signature; once threshold is met any member can execute
 - [x] Members identified by LEZ public keys (AccountIds, 32 bytes)
 - [x] Multisig owns a treasury vault (PDA, derived from `create_key`)
@@ -27,9 +27,8 @@ Multi-signature governance program for LEZ, enabling M-of-N threshold approval f
 
 ### Usability
 
-- [ ] Authorised signers cannot be removed if N would become strictly less than M *(v0.2, guarded in spec)*
+- [x] Authorised signers cannot be removed if N would become strictly less than M
 - [x] Signature proposal displays relevant information (proposal index, status, approvals, target action)
-- [ ] Signatures are exchanged over Logos Messaging, enabling in-band signing requests *(v0.2)*
 - [x] CLI for all operations: create, propose, approve, reject, execute, info
 
 ```
@@ -67,12 +66,13 @@ lez-wallet multisig execute --multisig <id> --proposal <index>
 - [x] Integration test: create → fund → propose → approve → execute → verify balances
 - [x] [Technical specification](https://github.com/jimmy-claw/lez-multisig/blob/main/SPEC.md) documents full account model, PDA derivation, instruction set, validation rules
 - [x] [Gap analysis](https://github.com/jimmy-claw/lez-multisig/blob/main/docs/gap-analysis.md) for runtime dependencies
+- [x] Standalone CLI
+- [x] Only public interactions for v0.1
 
 ### + (Privacy, Anonymity, Censorship-Resistance)
 
 - Proposal and approval actions are on-chain transactions — visible to validators
 - Member lists are stored in plaintext in the multisig state account
-- Future: private multisig would require shielded voting and ZK threshold proofs
 
 ## ADR
 
@@ -82,8 +82,6 @@ lez-wallet multisig execute --multisig <id> --proposal <index>
 2. **Delegation pattern**: ChainedCall — the multisig never directly modifies external state. On execute, it emits a `ChainedCall` to the target program (e.g., token program). Minimal surface area.
 3. **Account model**: PDA-based — Multisig State, Proposal, and Vault are all Program Derived Accounts. Deterministic addressing, no key management.
 4. **Member accounts**: Must be fresh keypairs claimed by the multisig program during `CreateMultisig` (LEZ runtime constraint — see [LSSA #339](https://github.com/logos-blockchain/lssa/issues/339)).
-5. **Interface**: Standalone CLI for now. 
-6. **Signer management**: Deferred to v0.2 — keeps v0.1 scope minimal while spec covers the design.
 
 ## Dependencies
 
